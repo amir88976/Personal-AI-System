@@ -1,11 +1,12 @@
 """
 Personal AI System
-LLM Engine v2.3
+LLM Engine v3.1
 """
 
 
-from core.ai_provider import AIProvider
+from core.llm_gateway import LLMGateway
 from core.local_ai_engine import LocalAIEngine
+
 
 
 
@@ -14,15 +15,15 @@ class LLMEngine:
 
     def __init__(self):
 
-        self.provider = AIProvider()
+        self.gateway = LLMGateway()
 
         self.local = LocalAIEngine()
 
 
-        self.provider.set_provider(
-            "local",
+        self.gateway.connect(
             self.local
         )
+
 
 
 
@@ -32,6 +33,6 @@ class LLMEngine:
     ):
 
 
-        return self.provider.generate(
+        return self.gateway.ask(
             prompt
         )
