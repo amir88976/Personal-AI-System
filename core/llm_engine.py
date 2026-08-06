@@ -1,7 +1,12 @@
 """
 Personal AI System
-LLM Engine v2.0
+LLM Engine v2.2
 """
+
+
+from core.ai_provider import AIProvider
+from core.local_ai_engine import LocalAIEngine
+
 
 
 class LLMEngine:
@@ -9,24 +14,23 @@ class LLMEngine:
 
     def __init__(self):
 
-        self.system_prompt = """
-تو یک دستیار هوش مصنوعی شخصی هستی.
-با کاربر دوستانه، طبیعی و با درک گفتگو صحبت کن.
-جواب‌ها را رباتی و تکراری نکن.
-"""
+        self.provider = AIProvider()
+
+        self.local = LocalAIEngine()
+
+        self.provider.set_provider(
+            "local",
+            self.local
+        )
 
 
 
     def generate(
-        self,
-        message,
-        memory=None
+            self,
+            context
     ):
 
 
-        # فعلاً جای اتصال مدل واقعی است
-
-        return (
-            "دارم روی پاسخ بهتر فکر می‌کنم: "
-            + message
+        return self.provider.generate(
+            str(context)
         )
