@@ -1,9 +1,8 @@
 """
 Personal AI System
-User Memory Manager v0.5
-
-Advanced user information storage
+Smart User Memory v0.6
 """
+
 
 from memory.memory_engine import MemoryEngine
 
@@ -27,51 +26,91 @@ class UserMemory:
 
 
 
-    def search_user_information(self, keyword=None):
-
-        results = self.memory.recall(
-            keyword
-        )
-
-        filtered = []
-
-        for item in results:
-
-            if item[1] == "user_information":
-
-                filtered.append(item[0])
-
-
-        return filtered
-
-
-
     def remember_sentence(self, sentence):
 
-        keywords = [
 
-            "من هستم",
+        text = sentence.strip()
+
+
+
+        # جمله های سوالی ذخیره نشوند
+
+        blocked = [
+
+            "؟",
+            "چی",
+            "کی",
+            "چرا",
+            "چگونه",
+            "چطور"
+
+        ]
+
+
+        for word in blocked:
+
+            if word in text:
+
+                return False
+
+
+
+
+        patterns = [
+
             "اسم من",
-            "منم",
-            "من",
+            "من هستم",
+            "من سازنده",
+            "من دارم",
             "به یاد بسپار",
             "یادآوری کن"
 
         ]
 
 
-        for key in keywords:
 
-            if key in sentence:
+        for pattern in patterns:
+
+
+            if pattern in text:
+
 
                 self.save_user_fact(
-                    sentence
+                    text
                 )
 
                 return True
 
 
+
         return False
+
+
+
+
+
+    def search_user_information(self):
+
+
+        results = self.memory.recall()
+
+
+
+        facts = []
+
+
+        for item in results:
+
+
+            if item[1] == "user_information":
+
+                facts.append(
+                    item[0]
+                )
+
+
+        return facts
+
 
 
 
