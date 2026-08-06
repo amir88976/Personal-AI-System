@@ -1,19 +1,15 @@
 """
 Personal AI System
-Brain Engine v1.4
+Brain Engine v2.0
 
-Emotion + Identity + Memory
+LLM First Architecture
 """
 
 
-from core.identity import IdentityEngine
-from core.dialogue_manager import DialogueManager
+from core.llm_engine import LLMEngine
 from core.personality import PersonalityEngine
-from core.emotion_engine import EmotionEngine
-
 
 from memory.profile_memory import ProfileMemory
-
 
 
 
@@ -22,16 +18,11 @@ class BrainEngine:
 
     def __init__(self):
 
-        self.identity = IdentityEngine()
-
-        self.dialogue = DialogueManager()
+        self.llm = LLMEngine()
 
         self.personality = PersonalityEngine()
 
-        self.emotion = EmotionEngine()
-
-        self.profile = ProfileMemory()
-
+        self.memory = ProfileMemory()
 
 
 
@@ -42,73 +33,34 @@ class BrainEngine:
 
 
 
-        # اول یادگیری اطلاعات کاربر
+        # گرفتن اطلاعات ذخیره شده
 
-        learned = self.profile.learn(
-            message
+        user_memory = self.memory.get_information()
+
+
+
+        # ساخت زمینه برای هوش مصنوعی
+
+        context = {
+
+            "user_memory": user_memory,
+
+            "message": message
+
+        }
+
+
+
+        # تولید پاسخ
+
+        answer = self.llm.generate(
+            context
         )
-
-
-        if learned:
-
-            return self.personality.format(
-                learned
-            )
-
-
-
-        # بررسی احساس و حالت کاربر
-
-        emotion = self.emotion.analyze(
-            message
-        )
-
-
-        emotion_reply = self.emotion.response(
-            emotion
-        )
-
-
-        if emotion_reply:
-
-            return self.personality.format(
-                emotion_reply
-            )
-
-
-
-        # بررسی هویت
-
-        identity_answer = self.identity.check(
-            message
-        )
-
-
-        if identity_answer:
-
-            return self.personality.format(
-                identity_answer
-            )
-
-
-
-        # مکالمه معمولی
-
-        dialogue_answer = self.dialogue.reply(
-            message
-        )
-
-
-        if dialogue_answer:
-
-            return self.personality.format(
-                dialogue_answer
-            )
 
 
 
         return self.personality.format(
-            "دارم گوش می‌کنم 😊 بیشتر توضیح بده."
+            answer
         )
 
 
