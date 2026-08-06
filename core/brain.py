@@ -1,12 +1,17 @@
 """
 Personal AI System
-Brain Engine v1.0
+Brain Engine v1.1
+
+Profile Memory Integrated
 """
 
 
 from core.identity import IdentityEngine
 from core.dialogue_manager import DialogueManager
 from core.personality import PersonalityEngine
+
+
+from memory.profile_memory import ProfileMemory
 
 
 
@@ -21,6 +26,8 @@ class BrainEngine:
 
         self.personality = PersonalityEngine()
 
+        self.profile = ProfileMemory()
+
 
 
     def process(self, message):
@@ -30,7 +37,51 @@ class BrainEngine:
 
 
 
-        # اول هویت
+        # یادگیری اطلاعات کاربر
+
+        learned = self.profile.learn(
+            message
+        )
+
+
+        if learned:
+
+            return self.personality.format(
+                learned
+            )
+
+
+
+        # پرسش درباره خودش
+
+        if (
+            "من کی هستم" in message
+            or "چی درباره من میدونی" in message
+        ):
+
+
+            info = self.profile.get_information()
+
+
+
+            if info:
+
+                return self.personality.format(
+
+                    "چیزهایی که می‌دانم:\n"
+                    +
+                    "\n".join(info)
+
+                )
+
+
+            return self.personality.format(
+                "هنوز اطلاعات زیادی درباره تو ندارم."
+            )
+
+
+
+        # هویت AI
 
         answer = self.identity.check(
             message
@@ -45,7 +96,7 @@ class BrainEngine:
 
 
 
-        # بعد مکالمه
+        # مکالمه
 
         answer = self.dialogue.reply(
             message
@@ -60,10 +111,8 @@ class BrainEngine:
 
 
 
-        # جواب پیش فرض بهتر
-
         return self.personality.format(
-            "جالبه 😊 بیشتر برام توضیح بده."
+            "جالبه 😊 ادامه بده، گوش می‌کنم."
         )
 
 
