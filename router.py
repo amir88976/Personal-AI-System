@@ -1,31 +1,15 @@
 """
 Personal AI System
-Smart Router v0.4
-
-Request routing layer
+Smart Router v1.0
 """
 
-
-from core.brain import process_brain
-
+from brain import think
 
 
 def process_request(message):
 
-
     try:
-
-        result = process_brain(
-            message
-        )
-
-        return result
-
+        return think(message)
 
     except Exception as error:
-
-
-        return (
-            "خطا در پردازش مغز AI:\n"
-            + str(error)
-        )
+        return "خطا در پردازش مغز AI:\n" + str(error)
