@@ -1,11 +1,17 @@
 """
 Personal AI System
-Core Brain Engine v0.3
+Brain Engine v0.4
 
-Main reasoning layer
+Integrated reasoning core
 """
 
+
 from datetime import datetime
+
+
+from core.decision import DecisionEngine
+from core.personality import PersonalityEngine
+
 
 try:
     from memory.memory_engine import MemoryEngine
@@ -13,21 +19,22 @@ except Exception:
     MemoryEngine = None
 
 
-try:
-    from core.personality import PersonalityEngine
-except Exception:
-    PersonalityEngine = None
-
-
 
 class BrainEngine:
+
 
     def __init__(self):
 
         self.name = "Personal AI"
 
+
+        self.decision = DecisionEngine()
+
+
+        self.personality = PersonalityEngine()
+
+
         self.memory = None
-        self.personality = None
 
 
         if MemoryEngine:
@@ -36,32 +43,27 @@ class BrainEngine:
                 self.memory = MemoryEngine()
 
             except Exception:
-                self.memory = None
+                pass
 
 
 
-        if PersonalityEngine:
+    def process(self, message):
 
-            try:
-                self.personality = PersonalityEngine()
-
-            except Exception:
-                self.personality = None
-
-
-
-    def think(self, message):
 
         message = str(message).strip()
 
 
         if not message:
 
-            return "پیامی دریافت نکردم."
+            return "پیام خالی است."
 
 
 
-        # ذخیره گفتگو در حافظه
+        analysis = self.decision.analyze(
+            message
+        )
+
+
 
         if self.memory:
 
@@ -69,92 +71,71 @@ class BrainEngine:
 
                 self.memory.remember(
                     message,
-                    "conversation"
+                    analysis["type"]
                 )
 
             except Exception:
+
                 pass
 
 
 
-        response = self.generate_response(message)
-
-
-        return response
-
-
-
-    def generate_response(self, message):
-
-
-        text = message.lower()
+        answer = self.generate_answer(
+            message,
+            analysis
+        )
 
 
 
-        if "سلام" in message or "hello" in text:
+        return self.personality.format(
+            answer
+        )
 
-            answer = (
-                "سلام 👋\n"
-                "من Personal AI هستم. "
-                "هسته جدید من فعال شده."
+
+
+
+
+    def generate_answer(
+            self,
+            message,
+            analysis
+    ):
+
+
+        category = analysis["type"]
+
+
+
+        if category == "question":
+
+            return (
+                "سؤال تو دریافت شد. "
+                "در نسخه‌های بعدی موتور تحلیل "
+                "پاسخ‌دهی پیشرفته اضافه می‌شود."
             )
 
 
 
-        elif "اسم" in message:
+        elif category == "memory":
 
-            answer = (
-                f"نام من {self.name} است."
+            return (
+                "درخواست حافظه ثبت شد."
             )
 
 
 
-        elif "حافظه" in message:
+        elif category == "planning":
 
-            if self.memory:
-
-                memories = self.memory.get_recent(5)
-
-                answer = (
-                    "آخرین اطلاعات ذخیره شده:\n"
-                    +
-                    "\n".join(
-                        [
-                            str(x[0])
-                            for x in memories
-                        ]
-                    )
-                )
-
-            else:
-
-                answer = "حافظه هنوز فعال نشده."
-
-
-
-        else:
-
-            answer = (
-                "پیام تو دریافت شد.\n"
-                "من در حال پردازش و یادگیری ساختار جدید هستم."
+            return (
+                "درخواست برنامه‌ریزی شناسایی شد."
             )
 
 
 
-        if self.personality:
-
-            try:
-
-                answer = self.personality.format(
-                    answer
-                )
-
-            except Exception:
-                pass
-
-
-
-        return answer
+        return (
+            "پیام تو دریافت شد و توسط هسته "
+            "Personal AI پردازش شد."
+        )
 
 
 
@@ -166,4 +147,4 @@ brain = BrainEngine()
 
 def process_brain(message):
 
-    return brain.think(message)
+    return brain.process(message)
