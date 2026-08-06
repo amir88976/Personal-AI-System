@@ -1,8 +1,8 @@
 """
 Personal AI System
-Brain Engine v0.5
+Brain Engine v0.6
 
-Memory integrated core
+Conversation integrated core
 """
 
 
@@ -11,16 +11,16 @@ from core.personality import PersonalityEngine
 
 
 try:
-    from memory.memory_engine import MemoryEngine
+    from core.conversation import ConversationEngine
 except Exception:
-    MemoryEngine = None
+    ConversationEngine = None
+
 
 
 try:
-    from memory.user_memory import UserMemory
+    from memory.memory_engine import MemoryEngine
 except Exception:
-    UserMemory = None
-
+    MemoryEngine = None
 
 
 
@@ -38,28 +38,32 @@ class BrainEngine:
         self.personality = PersonalityEngine()
 
 
+        self.conversation = None
+
+
+        if ConversationEngine:
+
+            try:
+
+                self.conversation = ConversationEngine()
+
+            except Exception:
+
+                pass
+
+
+
         self.memory = None
-
-        self.user_memory = None
-
 
 
         if MemoryEngine:
 
             try:
+
                 self.memory = MemoryEngine()
 
             except Exception:
-                pass
 
-
-
-        if UserMemory:
-
-            try:
-                self.user_memory = UserMemory()
-
-            except Exception:
                 pass
 
 
@@ -74,7 +78,42 @@ class BrainEngine:
 
         if not message:
 
-            return "پیام خالی است."
+            return "پیامی دریافت نکردم."
+
+
+
+        # اول مکالمه طبیعی را بررسی کن
+
+        if self.conversation:
+
+
+            answer = self.conversation.process(
+                message
+            )
+
+
+            if answer:
+
+                return self.personality.format(
+                    answer
+                )
+
+
+
+        # ذخیره در حافظه گفتگو
+
+        if self.memory:
+
+            try:
+
+                self.memory.remember(
+                    message,
+                    "conversation"
+                )
+
+            except Exception:
+
+                pass
 
 
 
@@ -84,76 +123,13 @@ class BrainEngine:
 
 
 
-        # ذخیره گفتگو
-
-        if self.memory:
-
-            try:
-
-                self.memory.remember(
-                    message,
-                    analysis["type"]
-                )
-
-            except Exception:
-                pass
-
-
-
-
-        # بررسی اطلاعات شخصی
-
-        if self.user_memory:
-
-
-            try:
-
-                saved = self.user_memory.remember_sentence(
-                    message
-                )
-
-
-            except Exception:
-
-                saved = False
-
-
-
-
-        # درخواست مشاهده حافظه
-
-        if "من کی هستم" in message or "چی درباره من میدونی" in message:
-
-
-            if self.user_memory:
-
-                profile = self.user_memory.get_profile()
-
-
-                if profile:
-
-                    return self.personality.format(
-                        "اطلاعاتی که ذخیره کردم:\n"
-                        +
-                        "\n".join(profile)
-                    )
-
-
-
-                return self.personality.format(
-                    "هنوز اطلاعاتی از تو ذخیره نکردم."
-                )
-
-
-
-        answer = self.generate_answer(
-            message,
-            analysis
-        )
-
-
         return self.personality.format(
-            answer
+
+            self.generate_answer(
+                message,
+                analysis
+            )
+
         )
 
 
@@ -167,23 +143,18 @@ class BrainEngine:
     ):
 
 
-        if analysis["type"] == "memory":
-
-            return (
-                "اطلاعاتت را برای حافظه ثبت کردم."
-            )
-
-
         if analysis["type"] == "question":
 
             return (
-                "سؤال دریافت شد. "
-                "موتور تحلیل من در حال ارتقا است."
+                "سؤال جالبی پرسیدی. "
+                "در حال تحلیل آن هستم."
             )
 
 
+
         return (
-            "پیام دریافت شد و در هسته Personal AI پردازش شد."
+            "پیامت دریافت شد و توسط هسته "
+            "Personal AI پردازش شد."
         )
 
 
