@@ -1,40 +1,34 @@
-"""
-Personal AI System
-Brain Core v3.6
-"""
+# Brain Core
+
 
 from settings import AI_NAME
-from memory_manager import remember, get_memories
+from memory_manager import remember
+
 
 
 def think(message):
 
-    text = str(message).strip()
-    lower = text.lower()
+    message = message.lower()
 
-    remember(text)
 
-    memories = get_memories()
+    remember(message)
 
-    if "سلام" in lower:
-        return f"سلام حسین 👋😊 خوش اومدی. من {AI_NAME} هستم، چطوری؟"
 
-    if "اسم من" in lower:
-        return "یادم هست گفتی اسمت حسین است."
+    if "سلام" in message:
 
-    if "اسم تو" in lower or "اسمت چیه" in lower:
-        return f"من {AI_NAME} هستم 🤖"
+        return f"سلام، من {AI_NAME} هستم."
 
-    if "شعر" in lower:
-        return "در مسیر زندگی، امیدی هست که می‌درخشد، هر قدم کوچک شروع یک راه بزرگ است."
 
-    if "کی هستم" in lower or "من کیم" in lower:
-        return "طبق حافظه من، گفتی اسمت حسین است."
+    elif "اسم" in message:
 
-    if "چطوری" in lower:
-        return "خوبم حسین 😊 آماده‌ام باهات گفتگو کنم."
+        return f"اسم من {AI_NAME} است."
 
-    if "هیچی" in lower:
-        return "باشه 😊 گاهی وقت‌ها هیچی هم خوبه. دوست داری درباره چی حرف بزنیم؟"
 
-    return f"حسین، پیام تو رو گرفتم: {text} 😊"
+    elif "خوبی" in message:
+
+        return "خوبم، در حال توسعه هستم."
+
+
+    else:
+
+        return "پیام دریافت شد و ذخیره شد."
