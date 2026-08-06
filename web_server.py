@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 from router import process_request
 
@@ -8,9 +8,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-
-    return "Personal AI Server Online"
-
+    return render_template("chat.html")
 
 
 @app.route("/chat", methods=["POST"])
@@ -27,7 +25,6 @@ def chat():
             "response": answer
         }
     )
-
 
 
 if __name__ == "__main__":
