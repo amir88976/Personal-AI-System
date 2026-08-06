@@ -1,31 +1,12 @@
 """
 Personal AI System
-Brain Engine v0.9
-
-Identity + Context integrated core
+Brain Engine v1.0
 """
 
 
-from core.decision import DecisionEngine
+from core.identity import IdentityEngine
+from core.dialogue_manager import DialogueManager
 from core.personality import PersonalityEngine
-
-
-try:
-    from core.identity import IdentityEngine
-except Exception:
-    IdentityEngine = None
-
-
-try:
-    from core.dialogue_manager import DialogueManager
-except Exception:
-    DialogueManager = None
-
-
-try:
-    from memory.conversation_memory import ConversationMemory
-except Exception:
-    ConversationMemory = None
 
 
 
@@ -34,52 +15,11 @@ class BrainEngine:
 
     def __init__(self):
 
-        self.name = "Personal AI"
+        self.identity = IdentityEngine()
 
-
-        self.decision = DecisionEngine()
-
+        self.dialogue = DialogueManager()
 
         self.personality = PersonalityEngine()
-
-
-        self.identity = None
-
-
-        if IdentityEngine:
-
-            try:
-                self.identity = IdentityEngine()
-
-            except Exception:
-                pass
-
-
-
-        self.dialogue = None
-
-
-        if DialogueManager:
-
-            try:
-                self.dialogue = DialogueManager()
-
-            except Exception:
-                pass
-
-
-
-        self.context = None
-
-
-        if ConversationMemory:
-
-            try:
-                self.context = ConversationMemory()
-
-            except Exception:
-                pass
-
 
 
 
@@ -90,70 +30,40 @@ class BrainEngine:
 
 
 
-        if self.context:
+        # اول هویت
 
-            self.context.add_message(
-                "user",
-                message
+        answer = self.identity.check(
+            message
+        )
+
+
+        if answer:
+
+            return self.personality.format(
+                answer
             )
 
 
 
-        # اول هویت را بررسی کن
+        # بعد مکالمه
 
-        if self.identity:
+        answer = self.dialogue.reply(
+            message
+        )
 
 
-            identity_answer = self.identity.check(
-                message
+        if answer:
+
+            return self.personality.format(
+                answer
             )
 
 
-            if identity_answer:
 
-
-                if self.context:
-
-                    self.context.add_message(
-                        "ai",
-                        identity_answer
-                    )
-
-
-                return self.personality.format(
-                    identity_answer
-                )
-
-
-
-        # بعد مکالمه عادی
-
-        if self.dialogue:
-
-
-            reply = self.dialogue.reply(
-                message
-            )
-
-
-            if reply:
-
-                if self.context:
-
-                    self.context.add_message(
-                        "ai",
-                        reply
-                    )
-
-
-                return self.personality.format(
-                    reply
-                )
-
-
+        # جواب پیش فرض بهتر
 
         return self.personality.format(
-            "گوش کردم 👌 ادامه بده، دارم دنبال می‌کنم."
+            "جالبه 😊 بیشتر برام توضیح بده."
         )
 
 
