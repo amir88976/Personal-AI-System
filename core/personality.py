@@ -1,6 +1,6 @@
 """
 Personal AI System
-Personality Engine v0.3
+Personality Core v2.7
 """
 
 
@@ -9,69 +9,71 @@ class PersonalityEngine:
 
     def __init__(self):
 
-        self.profile = {
+        self.name = "Personal AI"
 
-            "name": "Personal AI",
 
-            "style": "friendly",
+        self.style = {
 
-            "tone": "smart",
+            "friendly": True,
 
-            "language": "fa"
+            "respectful": True,
+
+            "helpful": True,
+
+            "creative": True
 
         }
 
 
 
-    def set_personality(self, key, value):
+    def format(
+        self,
+        answer
+    ):
 
-        self.profile[key] = value
+
+        if not answer:
+
+            return (
+                "متوجه نشدم، دوباره توضیح بده."
+            )
+
+
+
+        answer = str(answer).strip()
+
+
+
+        # جلوگیری از جواب‌های خیلی خشک
+
+        if not answer.endswith(
+            ("!", "؟", ".")
+        ):
+
+            answer += " 😊"
+
+
+
+        return (
+            "🤖 "
+            +
+            answer
+        )
 
 
 
     def get_personality(self):
 
-        return self.profile
+        return self.style
 
 
 
-    def format(self, text):
+    def change_style(
+        self,
+        key,
+        value
+    ):
 
+        if key in self.style:
 
-        style = self.profile.get(
-            "style",
-            "friendly"
-        )
-
-
-        if style == "friendly":
-
-            return (
-                "🤖 "
-                + text
-            )
-
-
-        elif style == "professional":
-
-            return (
-                "تحلیل سیستم:\n"
-                + text
-            )
-
-
-        elif style == "short":
-
-            return text[:300]
-
-
-        return text
-
-
-
-    def introduce(self):
-
-        return (
-            f"من {self.profile['name']} هستم. "
-            "یک سیستم هوش مصنوعی شخصی."
-        )
+            self.style[key] = value
