@@ -1,12 +1,9 @@
 """
 Personal AI System
-Brain Engine v0.4
+Brain Engine v0.5
 
-Integrated reasoning core
+Memory integrated core
 """
-
-
-from datetime import datetime
 
 
 from core.decision import DecisionEngine
@@ -17,6 +14,13 @@ try:
     from memory.memory_engine import MemoryEngine
 except Exception:
     MemoryEngine = None
+
+
+try:
+    from memory.user_memory import UserMemory
+except Exception:
+    UserMemory = None
+
 
 
 
@@ -36,6 +40,9 @@ class BrainEngine:
 
         self.memory = None
 
+        self.user_memory = None
+
+
 
         if MemoryEngine:
 
@@ -47,10 +54,22 @@ class BrainEngine:
 
 
 
+        if UserMemory:
+
+            try:
+                self.user_memory = UserMemory()
+
+            except Exception:
+                pass
+
+
+
+
     def process(self, message):
 
 
         message = str(message).strip()
+
 
 
         if not message:
@@ -65,6 +84,8 @@ class BrainEngine:
 
 
 
+        # ذخیره گفتگو
+
         if self.memory:
 
             try:
@@ -75,8 +96,53 @@ class BrainEngine:
                 )
 
             except Exception:
-
                 pass
+
+
+
+
+        # بررسی اطلاعات شخصی
+
+        if self.user_memory:
+
+
+            try:
+
+                saved = self.user_memory.remember_sentence(
+                    message
+                )
+
+
+            except Exception:
+
+                saved = False
+
+
+
+
+        # درخواست مشاهده حافظه
+
+        if "من کی هستم" in message or "چی درباره من میدونی" in message:
+
+
+            if self.user_memory:
+
+                profile = self.user_memory.get_profile()
+
+
+                if profile:
+
+                    return self.personality.format(
+                        "اطلاعاتی که ذخیره کردم:\n"
+                        +
+                        "\n".join(profile)
+                    )
+
+
+
+                return self.personality.format(
+                    "هنوز اطلاعاتی از تو ذخیره نکردم."
+                )
 
 
 
@@ -84,7 +150,6 @@ class BrainEngine:
             message,
             analysis
         )
-
 
 
         return self.personality.format(
@@ -102,39 +167,23 @@ class BrainEngine:
     ):
 
 
-        category = analysis["type"]
-
-
-
-        if category == "question":
+        if analysis["type"] == "memory":
 
             return (
-                "سؤال تو دریافت شد. "
-                "در نسخه‌های بعدی موتور تحلیل "
-                "پاسخ‌دهی پیشرفته اضافه می‌شود."
+                "اطلاعاتت را برای حافظه ثبت کردم."
             )
 
 
-
-        elif category == "memory":
-
-            return (
-                "درخواست حافظه ثبت شد."
-            )
-
-
-
-        elif category == "planning":
+        if analysis["type"] == "question":
 
             return (
-                "درخواست برنامه‌ریزی شناسایی شد."
+                "سؤال دریافت شد. "
+                "موتور تحلیل من در حال ارتقا است."
             )
-
 
 
         return (
-            "پیام تو دریافت شد و توسط هسته "
-            "Personal AI پردازش شد."
+            "پیام دریافت شد و در هسته Personal AI پردازش شد."
         )
 
 
