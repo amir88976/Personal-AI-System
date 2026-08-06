@@ -1,6 +1,6 @@
 """
 Personal AI System
-LLM Engine v2.2
+LLM Engine v2.3
 """
 
 
@@ -18,6 +18,7 @@ class LLMEngine:
 
         self.local = LocalAIEngine()
 
+
         self.provider.set_provider(
             "local",
             self.local
@@ -26,11 +27,11 @@ class LLMEngine:
 
 
     def generate(
-            self,
-            context
+        self,
+        prompt
     ):
 
 
         return self.provider.generate(
-            str(context)
+            prompt
         )
