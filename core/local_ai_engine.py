@@ -1,7 +1,12 @@
 """
 Personal AI System
-Local AI Engine v2.8
+Local AI Engine v2.9
 """
+
+
+from core.model_adapter import ModelAdapter
+
+
 
 
 class LocalAIEngine:
@@ -9,7 +14,7 @@ class LocalAIEngine:
 
     def __init__(self):
 
-        self.model_name = "Personal Brain"
+        self.adapter = ModelAdapter()
 
 
 
@@ -19,39 +24,17 @@ class LocalAIEngine:
     ):
 
 
-        text = str(prompt).lower()
+        response = self.adapter.generate(
+            prompt
+        )
 
 
+        if response:
 
-        if "شعر" in text:
-
-            return """
-در دل شب، نوری از امید پیداست،
-راهی که می‌رویم همیشه زیباست.
-هر قدم کوچک، شروع یک سفر،
-فردایی روشن در انتظار ماست.
-"""
-
-
-
-        if "سلام" in text:
-
-            return (
-                "سلام حسین 👋😊 "
-                "خوش اومدی، چه خبر؟"
-            )
-
-
-
-        if "اسم من" in text:
-
-            return (
-                "یادم هست که گفتی اسمت حسین است."
-            )
+            return response
 
 
 
         return (
-            "پیامت را دریافت کردم. "
-            "دارم روی درک بهتر گفتگو کار می‌کنم."
+            "مدل زبانی هنوز متصل نشده است."
         )
