@@ -1,8 +1,8 @@
 """
 Personal AI System
-Brain Engine v0.7
+Brain Engine v0.8
 
-Dialogue integrated core
+Context memory integrated core
 """
 
 
@@ -17,9 +17,9 @@ except Exception:
 
 
 try:
-    from memory.memory_engine import MemoryEngine
+    from memory.conversation_memory import ConversationMemory
 except Exception:
-    MemoryEngine = None
+    ConversationMemory = None
 
 
 
@@ -50,13 +50,13 @@ class BrainEngine:
 
 
 
-        self.memory = None
+        self.context = None
 
 
-        if MemoryEngine:
+        if ConversationMemory:
 
             try:
-                self.memory = MemoryEngine()
+                self.context = ConversationMemory()
 
             except Exception:
                 pass
@@ -77,7 +77,18 @@ class BrainEngine:
 
 
 
-        # اول مکالمه طبیعی
+        # ذخیره پیام کاربر
+
+        if self.context:
+
+            self.context.add_message(
+                "user",
+                message
+            )
+
+
+
+        # مکالمه طبیعی
 
         if self.dialogue:
 
@@ -89,26 +100,17 @@ class BrainEngine:
 
             if reply:
 
+                if self.context:
+
+                    self.context.add_message(
+                        "ai",
+                        reply
+                    )
+
+
                 return self.personality.format(
                     reply
                 )
-
-
-
-        # ذخیره گفتگو
-
-        if self.memory:
-
-            try:
-
-                self.memory.remember(
-                    message,
-                    "conversation"
-                )
-
-            except Exception:
-
-                pass
 
 
 
@@ -118,13 +120,24 @@ class BrainEngine:
 
 
 
-        return self.personality.format(
+        answer = self.generate_answer(
+            message,
+            analysis
+        )
 
-            self.generate_answer(
-                message,
-                analysis
+
+
+        if self.context:
+
+            self.context.add_message(
+                "ai",
+                answer
             )
 
+
+
+        return self.personality.format(
+            answer
         )
 
 
@@ -138,17 +151,29 @@ class BrainEngine:
     ):
 
 
+        recent = ""
+
+
+        if self.context:
+
+            history = self.context.get_recent(3)
+
+            recent = str(history)
+
+
+
         if analysis["type"] == "question":
 
             return (
-                "سؤالت رو گرفتم 😊 "
-                "دارم بررسی می‌کنم."
+                "سؤال تو دریافت شد 😊 "
+                "آخرین گفتگوهای ما را هم در نظر می‌گیرم."
             )
+
 
 
         return (
             "گوش کردم 👌 "
-            "بیشتر برام توضیح بده."
+            "ادامه بده، دارم دنبال می‌کنم."
         )
 
 
