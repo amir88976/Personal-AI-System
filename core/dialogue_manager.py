@@ -1,18 +1,10 @@
 """
 Personal AI System
-Dialogue Manager v0.7
+Dialogue Manager v1.0
 """
 
 
 class DialogueManager:
-
-
-    def __init__(self):
-
-        self.last_topic = None
-
-        self.mood = "friendly"
-
 
 
     def reply(self, message):
@@ -24,43 +16,28 @@ class DialogueManager:
         if "سلام" in text:
 
             return (
-                "سلام 👋😊 "
-                "خوش اومدی. "
-                "امروز حالت چطوره؟"
+                "سلام حسین 👋😊\n"
+                "خوش اومدی. امروز چطوری؟"
             )
 
 
 
-        if any(
-            x in text
-            for x in [
-                "خوبم",
-                "خوبه",
-                "عالی"
-            ]
+        if (
+            "خوبم" in text
+            or "عالی" in text
         ):
 
             return (
-                "خوشحالم که خوبی 😊 "
-                "من اینجام که کمکت کنم."
+                "خوشحالم که خوبی 😊\n"
+                "امروز روی چی کار کنیم؟"
             )
 
 
 
-        if "خسته" in text:
+        if "مرسی" in text or "ممنون" in text:
 
             return (
-                "امیدوارم کمی استراحت کنی. "
-                "اگر خواستی می‌تونیم آروم ادامه بدیم."
-            )
-
-
-
-        if "آره" in text or "بله" in text:
-
-            return (
-                "عالیه 👌 "
-                "بگو از کجا ادامه بدیم."
+                "خواهش می‌کنم 👌"
             )
 
 
