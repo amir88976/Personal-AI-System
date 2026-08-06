@@ -1,13 +1,19 @@
 """
 Personal AI System
-Brain Engine v0.8
+Brain Engine v0.9
 
-Context memory integrated core
+Identity + Context integrated core
 """
 
 
 from core.decision import DecisionEngine
 from core.personality import PersonalityEngine
+
+
+try:
+    from core.identity import IdentityEngine
+except Exception:
+    IdentityEngine = None
 
 
 try:
@@ -35,6 +41,19 @@ class BrainEngine:
 
 
         self.personality = PersonalityEngine()
+
+
+        self.identity = None
+
+
+        if IdentityEngine:
+
+            try:
+                self.identity = IdentityEngine()
+
+            except Exception:
+                pass
+
 
 
         self.dialogue = None
@@ -71,14 +90,6 @@ class BrainEngine:
 
 
 
-        if not message:
-
-            return "پیامی دریافت نکردم."
-
-
-
-        # ذخیره پیام کاربر
-
         if self.context:
 
             self.context.add_message(
@@ -88,7 +99,34 @@ class BrainEngine:
 
 
 
-        # مکالمه طبیعی
+        # اول هویت را بررسی کن
+
+        if self.identity:
+
+
+            identity_answer = self.identity.check(
+                message
+            )
+
+
+            if identity_answer:
+
+
+                if self.context:
+
+                    self.context.add_message(
+                        "ai",
+                        identity_answer
+                    )
+
+
+                return self.personality.format(
+                    identity_answer
+                )
+
+
+
+        # بعد مکالمه عادی
 
         if self.dialogue:
 
@@ -114,66 +152,8 @@ class BrainEngine:
 
 
 
-        analysis = self.decision.analyze(
-            message
-        )
-
-
-
-        answer = self.generate_answer(
-            message,
-            analysis
-        )
-
-
-
-        if self.context:
-
-            self.context.add_message(
-                "ai",
-                answer
-            )
-
-
-
         return self.personality.format(
-            answer
-        )
-
-
-
-
-
-    def generate_answer(
-            self,
-            message,
-            analysis
-    ):
-
-
-        recent = ""
-
-
-        if self.context:
-
-            history = self.context.get_recent(3)
-
-            recent = str(history)
-
-
-
-        if analysis["type"] == "question":
-
-            return (
-                "سؤال تو دریافت شد 😊 "
-                "آخرین گفتگوهای ما را هم در نظر می‌گیرم."
-            )
-
-
-
-        return (
-            "گوش کردم 👌 "
-            "ادامه بده، دارم دنبال می‌کنم."
+            "گوش کردم 👌 ادامه بده، دارم دنبال می‌کنم."
         )
 
 
