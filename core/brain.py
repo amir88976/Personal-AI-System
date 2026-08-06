@@ -1,8 +1,8 @@
 """
 Personal AI System
-Brain Engine v0.6
+Brain Engine v0.7
 
-Conversation integrated core
+Dialogue integrated core
 """
 
 
@@ -11,10 +11,9 @@ from core.personality import PersonalityEngine
 
 
 try:
-    from core.conversation import ConversationEngine
+    from core.dialogue_manager import DialogueManager
 except Exception:
-    ConversationEngine = None
-
+    DialogueManager = None
 
 
 try:
@@ -38,17 +37,15 @@ class BrainEngine:
         self.personality = PersonalityEngine()
 
 
-        self.conversation = None
+        self.dialogue = None
 
 
-        if ConversationEngine:
+        if DialogueManager:
 
             try:
-
-                self.conversation = ConversationEngine()
+                self.dialogue = DialogueManager()
 
             except Exception:
-
                 pass
 
 
@@ -59,11 +56,9 @@ class BrainEngine:
         if MemoryEngine:
 
             try:
-
                 self.memory = MemoryEngine()
 
             except Exception:
-
                 pass
 
 
@@ -82,25 +77,25 @@ class BrainEngine:
 
 
 
-        # اول مکالمه طبیعی را بررسی کن
+        # اول مکالمه طبیعی
 
-        if self.conversation:
+        if self.dialogue:
 
 
-            answer = self.conversation.process(
+            reply = self.dialogue.reply(
                 message
             )
 
 
-            if answer:
+            if reply:
 
                 return self.personality.format(
-                    answer
+                    reply
                 )
 
 
 
-        # ذخیره در حافظه گفتگو
+        # ذخیره گفتگو
 
         if self.memory:
 
@@ -146,15 +141,14 @@ class BrainEngine:
         if analysis["type"] == "question":
 
             return (
-                "سؤال جالبی پرسیدی. "
-                "در حال تحلیل آن هستم."
+                "سؤالت رو گرفتم 😊 "
+                "دارم بررسی می‌کنم."
             )
 
 
-
         return (
-            "پیامت دریافت شد و توسط هسته "
-            "Personal AI پردازش شد."
+            "گوش کردم 👌 "
+            "بیشتر برام توضیح بده."
         )
 
 
