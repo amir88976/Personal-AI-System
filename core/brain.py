@@ -1,6 +1,8 @@
 """
 Personal AI System
-Brain Engine v2.3
+Brain Engine v2.6
+
+Persistent Conversation Memory
 """
 
 
@@ -10,6 +12,8 @@ from core.personality import PersonalityEngine
 
 
 from memory.profile_memory import ProfileMemory
+from memory.chat_database import ChatDatabase
+
 
 
 
@@ -26,6 +30,9 @@ class BrainEngine:
 
         self.memory = ProfileMemory()
 
+        self.chat_db = ChatDatabase()
+
+
 
 
     def process(
@@ -38,25 +45,62 @@ class BrainEngine:
 
 
 
+        # ذخیره پیام کاربر
+
+        self.chat_db.save(
+            "user",
+            message
+        )
+
+
+
+        # گرفتن اطلاعات کاربر
+
         user_memory = (
             self.memory.get_information()
         )
 
 
 
+        # گرفتن تاریخچه قبلی
+
+        history = (
+            self.chat_db.load(20)
+        )
+
+
+
+        # ساخت پرامپت کامل
+
         final_prompt = self.prompt.build(
 
             message,
 
-            user_memory
+            user_memory,
+
+            history
 
         )
 
 
 
+        # تولید پاسخ
+
         answer = self.llm.generate(
 
             final_prompt
+
+        )
+
+
+
+        # ذخیره جواب AI
+
+        self.chat_db.save(
+
+            "ai",
+
+            answer
 
         )
 
