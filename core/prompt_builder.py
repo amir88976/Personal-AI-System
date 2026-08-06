@@ -9,30 +9,31 @@ class PromptBuilder:
 
     def __init__(self):
 
-        self.system = """
-تو یک دستیار هوش مصنوعی شخصی هستی.
-طبیعی، دوستانه و با درک گفتگو پاسخ بده.
-جواب‌ها را تکراری نکن.
+        self.system_prompt = """
+تو Personal AI هستی.
+یک دستیار هوش مصنوعی شخصی هستی.
+طبیعی، دوستانه و با درک گفتگو صحبت کن.
+جواب‌ها را تکراری و رباتی نکن.
+به اطلاعات قبلی کاربر توجه کن.
 """
 
 
 
     def build(
-            self,
-            message,
-            memory=None
+        self,
+        message,
+        memory=None,
+        history=None
     ):
 
 
-        prompt = self.system
+        prompt = self.system_prompt
 
 
 
         if memory:
 
-
             prompt += "\n\nاطلاعات کاربر:\n"
-
 
             for item in memory:
 
@@ -44,8 +45,23 @@ class PromptBuilder:
 
 
 
+        if history:
+
+            prompt += "\n\nگفتگوی اخیر:\n"
+
+            for item in history:
+
+                prompt += (
+                    item["role"]
+                    + ": "
+                    + item["text"]
+                    + "\n"
+                )
+
+
+
         prompt += (
-            "\nپیام کاربر:\n"
+            "\nپیام جدید کاربر:\n"
             + message
         )
 
