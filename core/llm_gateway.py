@@ -1,7 +1,12 @@
 """
 Personal AI System
-LLM Gateway v3.1
+LLM Gateway v3.2
 """
+
+
+from config.ai_config import AIConfig
+
+
 
 
 class LLMGateway:
@@ -10,6 +15,8 @@ class LLMGateway:
     def __init__(self):
 
         self.engine = None
+
+        self.config = AIConfig()
 
 
 
@@ -29,14 +36,18 @@ class LLMGateway:
     ):
 
 
-        if self.engine is None:
+        if not self.engine:
 
             return (
-                "موتور زبانی هنوز متصل نشده است."
+                "مدل هوش مصنوعی متصل نیست."
             )
 
 
 
         return self.engine.generate(
-            prompt
+
+            prompt,
+
+            self.config.all()
+
         )
