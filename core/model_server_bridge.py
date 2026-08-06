@@ -8,6 +8,7 @@ import requests
 
 
 
+
 class ModelServerBridge:
 
 
@@ -16,6 +17,7 @@ class ModelServerBridge:
         self.server_url = None
 
         self.enabled = False
+
 
 
 
@@ -30,6 +32,7 @@ class ModelServerBridge:
 
 
 
+
     def generate(
         self,
         prompt,
@@ -40,13 +43,12 @@ class ModelServerBridge:
         if not self.enabled:
 
             return (
-                "سرور مدل هنوز متصل نشده است."
+                "سرور مدل هنوز وصل نشده است."
             )
 
 
 
         try:
-
 
             response = requests.post(
 
@@ -84,6 +86,6 @@ class ModelServerBridge:
 
 
             return (
-                "خطا در ارتباط با موتور هوش مصنوعی: "
+                "خطای اتصال مدل: "
                 + str(e)
             )
