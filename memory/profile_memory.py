@@ -1,7 +1,11 @@
 """
 Personal AI System
-Profile Memory v1.1
+Persistent Profile Memory v1.3
 """
+
+
+from memory.database import Database
+
 
 
 class ProfileMemory:
@@ -9,13 +13,7 @@ class ProfileMemory:
 
     def __init__(self):
 
-        self.profile = {
-
-            "name": None,
-
-            "facts": []
-
-        }
+        self.db = Database()
 
 
 
@@ -24,6 +22,9 @@ class ProfileMemory:
 
         text = message.strip()
 
+
+
+        # یادگیری اسم
 
 
         if "اسم من" in text:
@@ -35,27 +36,36 @@ class ProfileMemory:
             ).strip()
 
 
-            self.profile["name"] = name
 
-
-            return (
-                f"خوشحالم که شناختمت {name} 👋"
+            self.db.save(
+                "name",
+                name
             )
 
 
 
-        if (
-            "من هستم" in text
-        ):
+            return (
+                f"خوشحالم که شناختمت {name} 👋\n"
+                "اسمت را به خاطر سپردم."
+            )
 
 
-            self.profile["facts"].append(
+
+
+        # یادگیری اطلاعات دیگر
+
+
+        if "من هستم" in text:
+
+
+            self.db.save(
+                "fact",
                 text
             )
 
 
             return (
-                "این اطلاعات را به خاطر می‌سپارم."
+                "این اطلاعات را ذخیره کردم 🧠"
             )
 
 
@@ -72,19 +82,32 @@ class ProfileMemory:
         result = []
 
 
-        if self.profile["name"]:
+
+        names = self.db.get(
+            "name"
+        )
+
+
+        facts = self.db.get(
+            "fact"
+        )
+
+
+
+        if names:
 
             result.append(
                 "نام: "
                 +
-                self.profile["name"]
+                names[-1]
             )
 
 
 
         result.extend(
-            self.profile["facts"]
+            facts
         )
+
 
 
         return result
