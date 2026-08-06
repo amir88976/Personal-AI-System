@@ -1,6 +1,6 @@
 """
 Personal AI System
-Local AI Engine v2.1
+Local AI Engine v2.8
 """
 
 
@@ -9,38 +9,49 @@ class LocalAIEngine:
 
     def __init__(self):
 
-        self.model_name = "personal-local-model"
-
-        self.ready = False
-
-
-
-    def load_model(self):
-
-        """
-        اینجا بعداً مدل واقعی
-        روی سیستم شخصی بارگذاری می‌شود
-        """
-
-        self.ready = True
+        self.model_name = "Personal Brain"
 
 
 
     def generate(
-            self,
-            prompt
+        self,
+        prompt
     ):
 
 
-        if not self.ready:
+        text = str(prompt).lower()
+
+
+
+        if "شعر" in text:
+
+            return """
+در دل شب، نوری از امید پیداست،
+راهی که می‌رویم همیشه زیباست.
+هر قدم کوچک، شروع یک سفر،
+فردایی روشن در انتظار ماست.
+"""
+
+
+
+        if "سلام" in text:
 
             return (
-                "موتور هوش مصنوعی محلی هنوز فعال نشده."
+                "سلام حسین 👋😊 "
+                "خوش اومدی، چه خبر؟"
+            )
+
+
+
+        if "اسم من" in text:
+
+            return (
+                "یادم هست که گفتی اسمت حسین است."
             )
 
 
 
         return (
-            "پاسخ ساخته شده توسط "
-            + self.model_name
+            "پیامت را دریافت کردم. "
+            "دارم روی درک بهتر گفتگو کار می‌کنم."
         )
