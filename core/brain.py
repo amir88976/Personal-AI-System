@@ -1,13 +1,13 @@
 """
 Personal AI System
-Brain Engine v2.0
-
-LLM First Architecture
+Brain Engine v2.3
 """
 
 
 from core.llm_engine import LLMEngine
+from core.prompt_builder import PromptBuilder
 from core.personality import PersonalityEngine
+
 
 from memory.profile_memory import ProfileMemory
 
@@ -20,47 +20,52 @@ class BrainEngine:
 
         self.llm = LLMEngine()
 
+        self.prompt = PromptBuilder()
+
         self.personality = PersonalityEngine()
 
         self.memory = ProfileMemory()
 
 
 
-    def process(self, message):
+    def process(
+        self,
+        message
+    ):
 
 
         message = str(message).strip()
 
 
 
-        # گرفتن اطلاعات ذخیره شده
-
-        user_memory = self.memory.get_information()
-
-
-
-        # ساخت زمینه برای هوش مصنوعی
-
-        context = {
-
-            "user_memory": user_memory,
-
-            "message": message
-
-        }
+        user_memory = (
+            self.memory.get_information()
+        )
 
 
 
-        # تولید پاسخ
+        final_prompt = self.prompt.build(
+
+            message,
+
+            user_memory
+
+        )
+
+
 
         answer = self.llm.generate(
-            context
+
+            final_prompt
+
         )
 
 
 
         return self.personality.format(
+
             answer
+
         )
 
 
