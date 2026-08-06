@@ -1,31 +1,29 @@
 """
 Personal AI System
-Local AI Engine v3.4
+Local AI Engine v3.5
 """
 
 
-from core.model_interface import BaseModel
-from core.model_connector import ModelConnector
+from core.model_server_bridge import ModelServerBridge
 
 
 
-
-class LocalAIEngine(BaseModel):
+class LocalAIEngine:
 
 
     def __init__(self):
 
-        self.connector = ModelConnector()
+        self.bridge = ModelServerBridge()
 
 
 
-    def attach_model(
+    def connect_server(
         self,
-        model
+        url
     ):
 
-        self.connector.connect(
-            model
+        self.bridge.connect(
+            url
         )
 
 
@@ -37,7 +35,10 @@ class LocalAIEngine(BaseModel):
     ):
 
 
-        return self.connector.generate(
+        return self.bridge.generate(
+
             prompt,
+
             config
+
         )
